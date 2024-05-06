@@ -60,7 +60,7 @@ func server() {
 	r.HandleFunc("/{slug}", handler.Redirect)
 	srv := &http.Server{
 		Handler: r,
-		Addr:    "127.0.0.1:80",
+		Addr:    ":80",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
@@ -111,7 +111,6 @@ func createConfig() {
 	if err != nil {
 		panic(err)
 	}
-	slog.Info("", "b", b)
 	err = os.WriteFile("config/"+path, b, 754)
 	if err != nil {
 		panic(err)
