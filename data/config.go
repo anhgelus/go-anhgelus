@@ -17,6 +17,38 @@ type Config struct {
 	Links []*LinkConfig `toml:"links"`
 }
 
+var Cfg *Config
+
+func (c *Config) GetLink(slug string) string {
+	for _, l := range c.Links {
+		if l.ID == slug {
+			return l.Link
+		}
+	}
+	return ""
+}
+
+func (c *Config) GetLinkConfig(slug string) *LinkConfig {
+	for _, l := range c.Links {
+		if l.ID == slug {
+			return l
+		}
+	}
+	return nil
+}
+
+//func (l *LinkConfig) GenerateID(path string) {
+//	l.ID = slug.GenerateSlug(time.Now().Unix(), 6)
+//	b, err := toml.Marshal(l)
+//	if err != nil {
+//		panic(err)
+//	}
+//	err = os.WriteFile(path, b, 0754)
+//	if err != nil {
+//		panic(err)
+//	}
+//}
+
 func GetConfig() (*Config, error) {
 	dir, err := os.ReadDir("config")
 	if err != nil {
@@ -41,7 +73,7 @@ func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
 			if err != nil {
 				return nil, err
 			}
-			conf, err := getConfigInDir(d, path+e.Name())
+			conf, err := getConfigInDir(d, path+e.Name()+"/")
 			if err != nil {
 				return nil, err
 			}
@@ -62,6 +94,11 @@ func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
+		//for _, l := range conf.Links {
+		//	if l.ID == "" {
+		//		l.GenerateID(path+e.Name())
+		//	}
+		//}
 		cfg.Links = append(cfg.Links, conf.Links...)
 	}
 	return &cfg, nil
