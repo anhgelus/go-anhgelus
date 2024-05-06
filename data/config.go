@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"github.com/pelletier/go-toml/v2"
 	"log/slog"
 	"os"
 	"strings"
@@ -52,6 +53,16 @@ func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
 			continue
 		}
 		// parse toml file
+		conf := Config{}
+		b, err := os.ReadFile(e.Name())
+		if err != nil {
+			return nil, err
+		}
+		err = toml.Unmarshal(b, &conf)
+		if err != nil {
+			return nil, err
+		}
+		cfg.Links = append(cfg.Links, conf.Links...)
 	}
 	return &cfg, nil
 }
