@@ -106,6 +106,7 @@ func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
 		for _, l := range conf.Links {
 			if l.ID == "" {
 				l.GenerateID(path + e.Name())
+				slog.Info("Generated slug", "link", l.Link, "slug", l.ID)
 			}
 		}
 		cfg.Links = append(cfg.Links, conf.Links...)
