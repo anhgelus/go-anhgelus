@@ -18,19 +18,15 @@ import (
 var (
 	verbose bool
 	help    bool
-	path    string
-	url     string
 )
 
 func init() {
 	flag.BoolVar(&verbose, "v", false, "Verbose mode")
 	flag.BoolVar(&help, "h", false, "Show the help")
-	flag.StringVar(&path, "path", "", "Set the path")
-	flag.StringVar(&url, "url", "", "Set the url")
+	flag.Parse()
 }
 
 func main() {
-	flag.Parse()
 	if help || len(os.Args) < 2 {
 		showHelp()
 		return
@@ -38,7 +34,6 @@ func main() {
 	if verbose {
 		slog.SetLogLoggerLevel(slog.LevelDebug)
 	}
-	slog.Info("Starting go-anhgelus")
 	// loading configs
 	slog.Info("Getting configs", "folder", "config")
 	var err error
@@ -51,10 +46,11 @@ func main() {
 	switch command {
 	case "run":
 		server()
-	case "create":
+	case "config":
 		createConfig()
 	default:
 		showHelp()
+		os.Exit(1)
 	}
 }
 
@@ -74,10 +70,13 @@ func server() {
 }
 
 func createConfig() {
-	if len(path) == 0 || len(url) == 0 {
+	if len(os.Args) < 4 {
+		slog.Debug("Path or url is empty")
 		showHelp()
-		return
+		os.Exit(2)
 	}
+	path := os.Args[2]
+	url := os.Args[3]
 	var b []byte
 	var cfg data.Config
 	if _, err := os.Stat("config/" + path); err == nil {
@@ -112,6 +111,7 @@ func createConfig() {
 	if err != nil {
 		panic(err)
 	}
+	slog.Info("", "b", b)
 	err = os.WriteFile("config/"+path, b, 754)
 	if err != nil {
 		panic(err)
@@ -123,7 +123,7 @@ func showHelp() {
 	println("Command:")
 	println("  - run -> start the http server")
 	println(
-		"  - config --path {path} --url {url} " +
+		"  - config {path} {url} " +
 			"-> create a new config (or edit the config) at the given path for the given url",
 	)
 	println("Flag:")

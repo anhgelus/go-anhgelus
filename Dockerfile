@@ -8,4 +8,4 @@ RUN go mod tidy && go build -o go-anhgelus .
 
 ENV LINKS=""
 
-CMD ./go-anhgelus $LINKS
+CMD sh entrypoint.sh $LINKS

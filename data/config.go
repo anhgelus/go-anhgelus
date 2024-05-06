@@ -64,7 +64,7 @@ func GetConfig() (*Config, error) {
 		}
 		return nil, err
 	}
-	return getConfigInDir(dir, "")
+	return getConfigInDir(dir, "config/")
 }
 
 func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
@@ -88,7 +88,7 @@ func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
 		}
 		// parse toml file
 		conf := Config{}
-		b, err := os.ReadFile(e.Name())
+		b, err := os.ReadFile(path + e.Name())
 		if err != nil {
 			return nil, err
 		}
