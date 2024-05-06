@@ -6,6 +6,7 @@ import (
 	"github.com/pelletier/go-toml/v2"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 	"time"
 )
@@ -37,6 +38,12 @@ func (c *Config) GetLinkConfig(slug string) *LinkConfig {
 		}
 	}
 	return nil
+}
+
+func (c *Config) Has(link string) bool {
+	return slices.ContainsFunc(c.Links, func(l *LinkConfig) bool {
+		return l.Link == link
+	})
 }
 
 func (l *LinkConfig) GenerateID(path string) {

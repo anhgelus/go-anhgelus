@@ -77,6 +77,10 @@ func createConfig() {
 	}
 	path := os.Args[2]
 	url := os.Args[3]
+	if data.Cfg.Has(url) {
+		slog.Debug("url already used in config")
+		os.Exit(3)
+	}
 	var b []byte
 	var cfg data.Config
 	if _, err := os.Stat("config/" + path); err == nil {
