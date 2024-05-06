@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"github.com/anhgelus/go-anhgelus/data"
 	"github.com/anhgelus/go-anhgelus/handler"
 	slug "github.com/anhgelus/human-readable-slug"
@@ -35,7 +36,7 @@ func main() {
 		slog.SetLogLoggerLevel(slog.LevelDebug)
 	}
 	// loading configs
-	slog.Info("Getting configs", "folder", "config")
+	println("Getting configs")
 	var err error
 	data.Cfg, err = data.GetConfig()
 	if err != nil {
@@ -81,8 +82,8 @@ func createConfig() {
 		slog.Debug("url already used in config")
 		os.Exit(3)
 	}
-	var b []byte
 	var cfg data.Config
+	id := slug.GenerateSlug(uint64(time.Now().UnixMilli()), 6)
 	if _, err := os.Stat("config/" + path); err == nil {
 		by, err := os.ReadFile("config/" + path)
 		if err != nil {
@@ -95,7 +96,7 @@ func createConfig() {
 		cfg.Links = append(
 			cfg.Links,
 			&data.LinkConfig{
-				ID:   slug.GenerateSlug(uint64(time.Now().Unix()), 6),
+				ID:   id,
 				Link: url,
 			},
 		)
@@ -103,7 +104,7 @@ func createConfig() {
 		cfg = data.Config{
 			Links: []*data.LinkConfig{
 				{
-					ID:   slug.GenerateSlug(uint64(time.Now().Unix()), 6),
+					ID:   id,
 					Link: url,
 				},
 			},
@@ -119,6 +120,7 @@ func createConfig() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("Link %s added to the config with the slug %s (https://go.anhgelus.world/%s)\n", url, id, id)
 }
 
 func showHelp() {
