@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"github.com/anhgelus/go-anhgelus/data"
 	"github.com/anhgelus/go-anhgelus/handler"
@@ -77,19 +78,41 @@ func createConfig() {
 		showHelp()
 		return
 	}
-	cfg := data.Config{
-		Links: []*data.LinkConfig{
-			{
+	var b []byte
+	var cfg data.Config
+	if _, err := os.Stat("config/" + path); err == nil {
+		by, err := os.ReadFile("config/" + path)
+		if err != nil {
+			panic(err)
+		}
+		err = toml.Unmarshal(by, &cfg)
+		if err != nil {
+			panic(err)
+		}
+		cfg.Links = append(
+			cfg.Links,
+			&data.LinkConfig{
 				ID:   slug.GenerateSlug(time.Now().Unix(), 6),
 				Link: url,
 			},
-		},
+		)
+	} else if errors.Is(err, os.ErrNotExist) {
+		cfg = data.Config{
+			Links: []*data.LinkConfig{
+				{
+					ID:   slug.GenerateSlug(time.Now().Unix(), 6),
+					Link: url,
+				},
+			},
+		}
+	} else {
+		panic(err)
 	}
 	b, err := toml.Marshal(cfg)
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(path, b, 754)
+	err = os.WriteFile("config/"+path, b, 754)
 	if err != nil {
 		panic(err)
 	}
@@ -99,7 +122,10 @@ func showHelp() {
 	println("Help of go-anhgelus")
 	println("Command:")
 	println("  - run -> start the http server")
-	println("  - config --path {path} --url {url} -> create a new config at the given path for the given url")
+	println(
+		"  - config --path {path} --url {url} " +
+			"-> create a new config (or edit the config) at the given path for the given url",
+	)
 	println("Flag:")
 	println("  - -v -> Verbose mode")
 	println("  - -h -> Show the help (this)")
