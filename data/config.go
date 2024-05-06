@@ -40,7 +40,7 @@ func (c *Config) GetLinkConfig(slug string) *LinkConfig {
 }
 
 func (l *LinkConfig) GenerateID(path string) {
-	l.ID = slug.GenerateSlug(time.Now().Unix(), 6)
+	l.ID = slug.GenerateSlug(uint64(time.Now().Unix()), 6)
 	b, err := toml.Marshal(l)
 	if err != nil {
 		panic(err)

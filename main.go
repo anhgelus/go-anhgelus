@@ -91,7 +91,7 @@ func createConfig() {
 		cfg.Links = append(
 			cfg.Links,
 			&data.LinkConfig{
-				ID:   slug.GenerateSlug(time.Now().Unix(), 6),
+				ID:   slug.GenerateSlug(uint64(time.Now().Unix()), 6),
 				Link: url,
 			},
 		)
@@ -99,7 +99,7 @@ func createConfig() {
 		cfg = data.Config{
 			Links: []*data.LinkConfig{
 				{
-					ID:   slug.GenerateSlug(time.Now().Unix(), 6),
+					ID:   slug.GenerateSlug(uint64(time.Now().Unix()), 6),
 					Link: url,
 				},
 			},
