@@ -4,7 +4,7 @@ go-anhgelus is a URL Shortener web application.
 
 ## Installation
 
-There are two ways to install the bot: docker and build.
+There are two ways to install the application: docker and build.
 
 ### Docker
 
