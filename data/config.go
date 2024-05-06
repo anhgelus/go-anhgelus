@@ -2,10 +2,12 @@ package data
 
 import (
 	"errors"
+	slug "github.com/anhgelus/human-readable-slug"
 	"github.com/pelletier/go-toml/v2"
 	"log/slog"
 	"os"
 	"strings"
+	"time"
 )
 
 type LinkConfig struct {
@@ -37,17 +39,17 @@ func (c *Config) GetLinkConfig(slug string) *LinkConfig {
 	return nil
 }
 
-//func (l *LinkConfig) GenerateID(path string) {
-//	l.ID = slug.GenerateSlug(time.Now().Unix(), 6)
-//	b, err := toml.Marshal(l)
-//	if err != nil {
-//		panic(err)
-//	}
-//	err = os.WriteFile(path, b, 0754)
-//	if err != nil {
-//		panic(err)
-//	}
-//}
+func (l *LinkConfig) GenerateID(path string) {
+	l.ID = slug.GenerateSlug(time.Now().Unix(), 6)
+	b, err := toml.Marshal(l)
+	if err != nil {
+		panic(err)
+	}
+	err = os.WriteFile(path, b, 0754)
+	if err != nil {
+		panic(err)
+	}
+}
 
 func GetConfig() (*Config, error) {
 	dir, err := os.ReadDir("config")
@@ -94,11 +96,11 @@ func getConfigInDir(dir []os.DirEntry, path string) (*Config, error) {
 		if err != nil {
 			return nil, err
 		}
-		//for _, l := range conf.Links {
-		//	if l.ID == "" {
-		//		l.GenerateID(path+e.Name())
-		//	}
-		//}
+		for _, l := range conf.Links {
+			if l.ID == "" {
+				l.GenerateID(path + e.Name())
+			}
+		}
 		cfg.Links = append(cfg.Links, conf.Links...)
 	}
 	return &cfg, nil
