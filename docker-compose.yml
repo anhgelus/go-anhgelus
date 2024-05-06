@@ -1,0 +1,9 @@
+services:
+  go:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./config:/app/config
+    ports:
+      - 8080:80
